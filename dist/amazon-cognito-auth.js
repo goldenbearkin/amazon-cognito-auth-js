@@ -1153,11 +1153,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'getCodeQueryParameter',
 	    value: function getCodeQueryParameter(httpRequestResponse) {
 	      var map = this.getQueryParameters(httpRequestResponse, this.getCognitoConstants().QUESTIONMARK);
-	      if (map.has(this.getCognitoConstants().STATE)) {
-	        var stateParameter = map.get(this.getCognitoConstants().STATE);
-	        this.setState(JSON.parse(decodeURIComponent(stateParameter)));
-	        console.log(this.state);
-	      }
 	      if (map.has(this.getCognitoConstants().CODE)) {
 	        // if the response contains code
 	        // To parse the response and get the code value.
@@ -1204,6 +1199,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.signInUserSession.setRefreshToken(refreshToken);
 	      } else {
 	        this.signInUserSession.setRefreshToken(refreshToken);
+	      }
+	      if (map.has(this.getCognitoConstants().STATE)) {
+	        var stateParameter = map.get(this.getCognitoConstants().STATE);
+	        this.setState(JSON.parse(decodeURIComponent(stateParameter)));
+	        console.log(this.state);
 	      }
 	      this.cacheTokensScopes();
 	      return this.userhandler.onSuccess(this.signInUserSession);
