@@ -1155,7 +1155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var map = this.getQueryParameters(httpRequestResponse, this.getCognitoConstants().QUESTIONMARK);
 	      if (map.has(this.getCognitoConstants().STATE)) {
 	        var stateParameter = map.get(this.getCognitoConstants().STATE);
-	        this.setState(decodeURIComponent(stateParameter));
+	        this.setState(JSON.parse(decodeURIComponent(stateParameter)));
 	      }
 	      if (map.has(this.getCognitoConstants().CODE)) {
 	        // if the response contains code
@@ -1598,7 +1598,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function getFQDNSignIn() {
 	      var randomString = this.generateRandomString(this.getCognitoConstants().STATELENGTH, this.getCognitoConstants().STATEORIGINSTRING);
 	      var stateObj = Object.assign(this.getState(), { 'csrfToken': randomString });
-	      var state = encodeURIComponent(stateObj);
+	      var state = encodeURIComponent(JSON.stringify(stateObj));
 	      var identityProviderParam = this.IdentityProvider ? this.getCognitoConstants().AMPERSAND.concat(this.getCognitoConstants().DOMAIN_QUERY_PARAM_IDENTITY_PROVIDER, this.getCognitoConstants().EQUALSIGN, this.IdentityProvider) : '';
 	      var tokenScopesString = this.getSpaceSeperatedScopeString();
 	      // Build the complete web domain to launch the login screen
