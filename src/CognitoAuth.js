@@ -61,6 +61,7 @@ export default class CognitoAuth {
     this.storage = new StorageHelper().getStorage();
     this.signInUserSession.setTokenScopes(tokenScopes);
     this.username = this.getLastUser();
+    this.state = {};
   }
 
   /**
@@ -188,6 +189,21 @@ export default class CognitoAuth {
   }
 
   /**
+   * @returns {object} the state object
+   */
+  getState() {
+    return this.state;
+  }
+
+  /**
+   * @param {object} state the state object
+   * @returns {void}
+   */
+  setState(state) {
+    this.state = state;
+  }
+
+  /**
    * This is used to get a session, either from the session object
    * or from the local storage, or by using a refresh token
    * @param {string} RedirectUriSignIn Required: The redirect Uri,
@@ -250,6 +266,10 @@ export default class CognitoAuth {
       httpRequestResponse,
       this.getCognitoConstants().QUESTIONMARK
     );
+    if (map.has(this.getCognitoConstants().STATE)) {
+      const stateParameter = map.get(this.getCognitoConstants().STATE);
+      this.setState(decodeURIComponent(stateParameter));
+    }
     if (map.has(this.getCognitoConstants().CODE)) {
       // if the response contains code
       // To parse the response and get the code value.
@@ -633,8 +653,9 @@ export default class CognitoAuth {
    * @returns {string} url
    */
   getFQDNSignIn() {
-    const state = this.generateRandomString(this.getCognitoConstants().STATELENGTH,
-    this.getCognitoConstants().STATEORIGINSTRING);
+    const randomString = this.generateRandomString(this.getCognitoConstants().STATELENGTH, this.getCognitoConstants().STATEORIGINSTRING);
+    const stateObj = Object.assign(this.getState(), {'csrfToken': randomString});
+    const state = encodeURIComponent(stateObj);
     const identityProviderParam = this.IdentityProvider
         ? this.getCognitoConstants().AMPERSAND.concat(
             this.getCognitoConstants().DOMAIN_QUERY_PARAM_IDENTITY_PROVIDER,
