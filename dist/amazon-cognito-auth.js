@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -128,9 +128,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  window.crypto = window.msCrypto;
 	}
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -228,9 +228,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = CognitoAccessToken;
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -313,9 +313,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = CognitoIdToken;
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -386,9 +386,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = CognitoRefreshToken;
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 
@@ -459,9 +459,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = CognitoTokenScopes;
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -664,9 +664,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = CognitoAuthSession;
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -798,15 +798,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = StorageHelper;
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -908,6 +908,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.storage = new _StorageHelper2.default().getStorage();
 	    this.signInUserSession.setTokenScopes(tokenScopes);
 	    this.username = this.getLastUser();
+	    this.state = {};
 	  }
 
 	  /**
@@ -1064,6 +1065,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    /**
+	     * @returns {object} the state object
+	     */
+
+	  }, {
+	    key: 'getState',
+	    value: function getState() {
+	      return this.state;
+	    }
+
+	    /**
+	     * @param {object} state the state object
+	     * @returns {void}
+	     */
+
+	  }, {
+	    key: 'setState',
+	    value: function setState(state) {
+	      this.state = state;
+	    }
+
+	    /**
 	     * This is used to get a session, either from the session object
 	     * or from the local storage, or by using a refresh token
 	     * @param {string} RedirectUriSignIn Required: The redirect Uri,
@@ -1131,6 +1153,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'getCodeQueryParameter',
 	    value: function getCodeQueryParameter(httpRequestResponse) {
 	      var map = this.getQueryParameters(httpRequestResponse, this.getCognitoConstants().QUESTIONMARK);
+	      if (map.has(this.getCognitoConstants().STATE)) {
+	        var stateParameter = map.get(this.getCognitoConstants().STATE);
+	        this.setState(decodeURIComponent(stateParameter));
+	      }
 	      if (map.has(this.getCognitoConstants().CODE)) {
 	        // if the response contains code
 	        // To parse the response and get the code value.
@@ -1570,12 +1596,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'getFQDNSignIn',
 	    value: function getFQDNSignIn() {
-	      var state = this.generateRandomString(this.getCognitoConstants().STATELENGTH, this.getCognitoConstants().STATEORIGINSTRING);
+	      var randomString = this.generateRandomString(this.getCognitoConstants().STATELENGTH, this.getCognitoConstants().STATEORIGINSTRING);
+	      var stateObj = Object.assign(this.getState(), { 'csrfToken': randomString });
+	      var state = encodeURIComponent(stateObj);
 	      var identityProviderParam = this.IdentityProvider ? this.getCognitoConstants().AMPERSAND.concat(this.getCognitoConstants().DOMAIN_QUERY_PARAM_IDENTITY_PROVIDER, this.getCognitoConstants().EQUALSIGN, this.IdentityProvider) : '';
 	      var tokenScopesString = this.getSpaceSeperatedScopeString();
 	      // Build the complete web domain to launch the login screen
 	      var uri = this.getCognitoConstants().DOMAIN_SCHEME.concat(this.getCognitoConstants().COLONDOUBLESLASH, this.getAppWebDomain(), this.getCognitoConstants().SLASH, this.getCognitoConstants().DOMAIN_PATH_SIGNIN, this.getCognitoConstants().QUESTIONMARK, this.getCognitoConstants().DOMAIN_QUERY_PARAM_REDIRECT_URI, this.getCognitoConstants().EQUALSIGN, encodeURIComponent(this.RedirectUriSignIn), this.getCognitoConstants().AMPERSAND, this.getCognitoConstants().DOMAIN_QUERY_PARAM_RESPONSE_TYPE, this.getCognitoConstants().EQUALSIGN, this.responseType, this.getCognitoConstants().AMPERSAND, this.getCognitoConstants().CLIENT_ID, this.getCognitoConstants().EQUALSIGN, this.getClientId(), this.getCognitoConstants().AMPERSAND, this.getCognitoConstants().STATE, this.getCognitoConstants().EQUALSIGN, state, this.getCognitoConstants().AMPERSAND, this.getCognitoConstants().SCOPE, this.getCognitoConstants().EQUALSIGN, tokenScopesString, identityProviderParam);
-	      console.log('--uri: '.concat(uri));
 	      return uri;
 	    }
 
@@ -1611,9 +1638,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = CognitoAuth;
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -1693,9 +1720,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = DateHelper;
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -1777,13 +1804,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_11__;
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
