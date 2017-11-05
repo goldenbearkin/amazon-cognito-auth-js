@@ -1599,7 +1599,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function getFQDNSignIn() {
 	      var randomString = this.generateRandomString(this.getCognitoConstants().STATELENGTH, this.getCognitoConstants().STATEORIGINSTRING);
 	      var stateObj = Object.assign(this.getState(), { 'csrfToken': randomString });
-	      var state = unescape(encodeURIComponent(JSON.stringify(stateObj)));
+	      var state = encodeURIComponent(JSON.stringify(stateObj));
 	      var identityProviderParam = this.IdentityProvider ? this.getCognitoConstants().AMPERSAND.concat(this.getCognitoConstants().DOMAIN_QUERY_PARAM_IDENTITY_PROVIDER, this.getCognitoConstants().EQUALSIGN, this.IdentityProvider) : '';
 	      var tokenScopesString = this.getSpaceSeperatedScopeString();
 	      // Build the complete web domain to launch the login screen

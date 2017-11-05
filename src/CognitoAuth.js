@@ -656,7 +656,7 @@ export default class CognitoAuth {
   getFQDNSignIn() {
     const randomString = this.generateRandomString(this.getCognitoConstants().STATELENGTH, this.getCognitoConstants().STATEORIGINSTRING);
     const stateObj = Object.assign(this.getState(), {'csrfToken': randomString});
-    const state = unescape(encodeURIComponent(JSON.stringify(stateObj)));
+    const state = encodeURIComponent(JSON.stringify(stateObj));
     const identityProviderParam = this.IdentityProvider
         ? this.getCognitoConstants().AMPERSAND.concat(
             this.getCognitoConstants().DOMAIN_QUERY_PARAM_IDENTITY_PROVIDER,
